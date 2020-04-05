@@ -5,6 +5,7 @@ import cn.edu.xidian.community1.dto.GitHubUser;
 import cn.edu.xidian.community1.mapper.UserMapper;
 import cn.edu.xidian.community1.model.User;
 import cn.edu.xidian.community1.provider.GitHubProvider;
+import cn.edu.xidian.community1.service.UserService;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -24,7 +26,7 @@ import java.util.UUID;
 public class AuthorizeController {
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Autowired
     private GitHubProvider gitHubProvider;
@@ -60,10 +62,10 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(gitHubUser.getName());
             user.setAccountId(String.valueOf((gitHubUser.getId())));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            userMapper.insert(user);
-            request.getSession().setAttribute("user",gitHubUser);
+
+            user.setAvatarUrl(gitHubUser.getAvatar_url());
+            userService.createOrUpdate(user);
+
             response.addCookie(new Cookie("token", token));
             return "redirect:/";
         }else{
@@ -74,5 +76,13 @@ public class AuthorizeController {
 
     }
 
-
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
+    }
 }
