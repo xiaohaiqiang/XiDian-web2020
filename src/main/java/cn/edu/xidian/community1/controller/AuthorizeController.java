@@ -55,16 +55,17 @@ public class AuthorizeController {
         String accessToken = gitHubProvider.getAccessToken(accessTokenDTO);
         GitHubUser gitHubUser = gitHubProvider.getUser(accessToken);
 
-        if(gitHubUser != null){
+        if(gitHubUser != null && gitHubUser.getId() != null){
             //登陆成功，写cookie和session
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
             user.setName(gitHubUser.getName());
-            user.setAccountId(String.valueOf((gitHubUser.getId())));
+            user.setAccountId(String.valueOf(gitHubUser.getId()));
 
             user.setAvatarUrl(gitHubUser.getAvatar_url());
             userService.createOrUpdate(user);
+
 
             response.addCookie(new Cookie("token", token));
             return "redirect:/";

@@ -3,23 +3,23 @@ package cn.edu.xidian.community1.dto;
 import cn.edu.xidian.community1.model.User;
 
 public class QuestionDTO {
-    private Integer id;
+    private Long id;
     private String title;
     private String description;
     private String tag;
     private Integer viewCount;
     private Integer commentCount;
     private Integer likeCount;
-    private Integer creator;
+    private Long creator;
     private long gmtCreate;
     private long gmtModified;
     private User user;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -71,11 +71,11 @@ public class QuestionDTO {
         this.likeCount = likeCount;
     }
 
-    public Integer getCreator() {
+    public Long getCreator() {
         return creator;
     }
 
-    public void setCreator(Integer creator) {
+    public void setCreator(Long creator) {
         this.creator = creator;
     }
 
