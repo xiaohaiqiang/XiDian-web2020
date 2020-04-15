@@ -1,6 +1,6 @@
 package cn.edu.xidian.community1.controller;
 
-import cn.edu.xidian.community1.dto.CommentDTO;
+import cn.edu.xidian.community1.dto.CommentCreateDTO;
 import cn.edu.xidian.community1.dto.ResultDTO;
 import cn.edu.xidian.community1.exception.CustomizeErrorCode;
 import cn.edu.xidian.community1.model.Comment;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 
 @Controller
 public class CommentController {
@@ -25,7 +23,7 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentDTO,
                        HttpServletRequest request){
 
         User user = (User)request.getSession().getAttribute("user");
