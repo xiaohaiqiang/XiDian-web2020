@@ -4,10 +4,7 @@ import cn.edu.xidian.community1.dto.CommentDTO;
 import cn.edu.xidian.community1.enums.CommentTypeEnum;
 import cn.edu.xidian.community1.exception.CustomizeErrorCode;
 import cn.edu.xidian.community1.exception.CustomizeException;
-import cn.edu.xidian.community1.mapper.CommentMapper;
-import cn.edu.xidian.community1.mapper.QuestionExtMapper;
-import cn.edu.xidian.community1.mapper.QuestionMapper;
-import cn.edu.xidian.community1.mapper.UserMapper;
+import cn.edu.xidian.community1.mapper.*;
 import cn.edu.xidian.community1.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,9 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CommentExtMapper commentExtMapper;
+
     @Transactional
     public void insert(Comment comment) {
         if(comment.getParentId() == null || comment.getParentId() == 0){
@@ -51,8 +51,12 @@ public class CommentService {
             if(dbComment == null){
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
-
             commentMapper.insert(comment);
+            // 增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
         }else{
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -66,11 +70,12 @@ public class CommentService {
     }
 
 
-    public List<CommentDTO> listByQuestionId(Long id) {
+    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
                 .andParentIdEqualTo(id)
-                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+                .andTypeEqualTo(type.getType());
+        commentExample.setOrderByClause("gmt_create desc");
         List<Comment> comments = commentMapper.selectByExample(commentExample);
 
         if (comments.size() == 0) {

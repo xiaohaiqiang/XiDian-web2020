@@ -28,8 +28,10 @@ public class CustomizeExceptionHandler {
             //返回JSON
             ResultDTO resultDTO;
             if(ex instanceof CustomizeException){
+                ex.printStackTrace();
                 resultDTO = ResultDTO.errorOf((CustomizeException)ex);
             }else{
+                ex.printStackTrace();
                 resultDTO = ResultDTO.errorOf(CustomizeErrorCode.SYS_ERROR);
             }
 
@@ -41,14 +43,16 @@ public class CustomizeExceptionHandler {
                 writer.write(JSON.toJSONString(resultDTO));
                 writer.close();
             } catch (IOException ioe) {
-
+                ioe.printStackTrace();
             }
             return null;
         }else{
             //错误页面跳转
             if(ex instanceof CustomizeException){
+                ex.printStackTrace();
                 model.addAttribute("message", ex.getMessage());
             }else{
+                ex.printStackTrace();
                 model.addAttribute("message", CustomizeErrorCode.SYS_ERROR.getMessage());
             }
 
