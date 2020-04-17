@@ -3,9 +3,9 @@ package cn.edu.xidian.community1.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaginationDTO {
-    private List<QuestionDTO> questions;
-    private boolean showPrivious;
+public class PaginationDTO<T> {
+    private List<T> data;
+    private boolean showPrevious;
     private boolean showFirstPage;
     private boolean showNext;
     private boolean showEndPage;
@@ -13,20 +13,20 @@ public class PaginationDTO {
     private List<Integer> pages = new ArrayList<>();
     private Integer totalPage;
 
-    public List<QuestionDTO> getQuestions() {
-        return questions;
+    public List<T> getData() {
+        return data;
     }
 
-    public void setQuestions(List<QuestionDTO> questions) {
-        this.questions = questions;
+    public void setData(List<T> data) {
+        this.data = data;
     }
 
-    public boolean isShowPrivious() {
-        return showPrivious;
+    public boolean isShowPrevious() {
+        return showPrevious;
     }
 
-    public void setShowPrivious(boolean showPrivious) {
-        this.showPrivious = showPrivious;
+    public void setShowPrevious(boolean showPrevious) {
+        this.showPrevious = showPrevious;
     }
 
     public boolean isShowFirstPage() {
@@ -94,9 +94,9 @@ public class PaginationDTO {
 
         //是否展示上一页
         if(page == 1){
-            showPrivious = false;
+            showPrevious = false;
         }else{
-            showPrivious = true;
+            showPrevious = true;
         }
 
         //是否展示下一页
