@@ -2,6 +2,7 @@ package cn.edu.xidian.community1.service;
 
 import cn.edu.xidian.community1.dto.PaginationDTO;
 import cn.edu.xidian.community1.dto.QuestionDTO;
+import cn.edu.xidian.community1.dto.QuestionQueryDTO;
 import cn.edu.xidian.community1.exception.CustomizeErrorCode;
 import cn.edu.xidian.community1.exception.CustomizeException;
 import cn.edu.xidian.community1.mapper.QuestionExtMapper;
@@ -34,12 +35,20 @@ public class QuestionService {
     private UserMapper userMapper;
 
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
 
-        PaginationDTO paginationDTO = new PaginationDTO();
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
-
+        if (StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
         Integer totalPage;
+
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        PaginationDTO paginationDTO = new PaginationDTO();
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
+
+
         if(totalCount % size == 0){
             totalPage = totalCount / size;
         }else{
@@ -61,7 +70,9 @@ public class QuestionService {
 
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setPage(offset);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
 
